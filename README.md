@@ -1,5 +1,5 @@
-# vmt_frontend
-Verein Management Tool - Frontend
+# themis_frontend
+Verein Management Tool Themis - Frontend
 
 # JWT Security
 https://medium.com/dev-bits/a-guide-for-adding-jwt-token-based-authentication-to-your-single-page-nodejs-applications-c403f7cf04f4
