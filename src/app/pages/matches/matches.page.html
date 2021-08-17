@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title *ngIf="selectedClub">Bevorstehende Spiele</ion-title>
+    <ion-title *ngIf="!selectedClub">Wähle deinen Verein</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid *ngIf="!selectedClub">
+    <ion-list *ngFor="let club of clubs">
+      <ion-row>
+        <ion-col size="12" size-md='6' offset-md='3'>
+          <ion-card button (click)="setSelectedClub(club._id)">
+            <ion-card-content>
+              {{ club.name }}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-list>
+  </ion-grid>
+
+  <ion-grid *ngIf="selectedClub">
+    <ion-list *ngFor="let match of matches">
+      <ion-row>
+        <ion-col size="12" size-md='10' offset-md='1'>
+          <ion-card>
+            <ion-card-content>
+              {{ match.name }}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-list>
+  </ion-grid>
+</ion-content>

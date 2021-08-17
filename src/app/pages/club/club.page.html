@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title *ngIf="clubs.length < 2">Dein Verein</ion-title>
+    <ion-title *ngIf="clubs.length >= 2">Deine Vereine</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+
+  <ion-grid>
+    <ion-list *ngFor="let club of clubs">
+      <ion-row>
+        <ion-col size="12" size-md='6' offset-md='3'>
+          <ion-card>
+            <ion-card-content>
+              {{ club.name }}
+              {{ club.invitationCode }}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-list>
+  </ion-grid>
+
+
+
+
+</ion-content>
