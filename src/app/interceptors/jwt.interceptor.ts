@@ -25,7 +25,7 @@ export class JwtInterceptor implements HttpInterceptor {
                 catchError(err => {
                     if (err instanceof HttpErrorResponse) {
                         switch (err.status) {
-                            case 400 || 401:
+                            case 401:
                                 return this.handleError(err);
                             default:
                                 return throwError(err);

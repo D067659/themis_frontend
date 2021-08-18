@@ -9,6 +9,11 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './interceptors/jwt.interceptor'
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
+
+registerLocaleData(localeDe, 'de');
 
 @NgModule({
   declarations: [AppComponent],
@@ -16,7 +21,9 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor'
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: LOCALE_ID, useValue: 'de' }
+
   ],
   bootstrap: [AppComponent],
 })

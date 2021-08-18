@@ -3,37 +3,80 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title *ngIf="selectedClub">Bevorstehende Spiele</ion-title>
+    <ion-title *ngIf="selectedClub">{{ selectedClub.name }}</ion-title>
     <ion-title *ngIf="!selectedClub">Wähle deinen Verein</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-grid *ngIf="!selectedClub">
-    <ion-list *ngFor="let club of clubs">
-      <ion-row>
-        <ion-col size="12" size-md='6' offset-md='3'>
-          <ion-card button (click)="setSelectedClub(club._id)">
+  <ion-row>
+    <ion-col size="12" size-md='6' offset-md='3'>
+      <ion-button type="button" expand="block" fill="clear" (click)="resetSelectedClub()" *ngIf="selectedClub">
+        Ausgewählter
+        Verein ändern
+      </ion-button>
+      <ion-grid *ngIf="!selectedClub">
+        <ion-list *ngFor="let club of clubs">
+          <ion-card button (click)="setSelectedClub(club)">
             <ion-card-content>
               {{ club.name }}
             </ion-card-content>
           </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-list>
-  </ion-grid>
+        </ion-list>
+      </ion-grid>
 
-  <ion-grid *ngIf="selectedClub">
-    <ion-list *ngFor="let match of matches">
-      <ion-row>
-        <ion-col size="12" size-md='10' offset-md='1'>
+      <ion-grid *ngIf="selectedClub">
+        <ion-list *ngFor="let match of matches">
           <ion-card>
-            <ion-card-content>
-              {{ match.name }}
-            </ion-card-content>
+            <ion-card-header>
+              <ion-card-subtitle>{{ match.isHome ? 'Heimspiel' : 'Auswärtsspiel' }} gegen {{ match.opponent }}
+              </ion-card-subtitle>
+              <ion-card-title>{{ match.startDate | date:'EE, dd.MM.yy' }}</ion-card-title>
+            </ion-card-header>
+            <div>
+              <ion-item text-wrap>
+                <ion-icon name="time-outline" slot="start"></ion-icon>
+                <ion-label> {{match.startDate | date:"HH:mm ":"+0000"}} Uhr</ion-label>
+              </ion-item>
+              <ion-item text-wrap>
+                <ion-icon name="flag-outline" slot="start"></ion-icon>
+                <ion-label>{{ match.city }}</ion-label>
+              </ion-item>
+              <ion-item text-wrap>
+                <ion-icon name="location-outline" slot="start"></ion-icon>
+                <ion-label text-wrap>{{match.meetingPoint }}</ion-label>
+              </ion-item>
+            </div>
+            <div>
+              <p style="text-align: center;"><b>Teilnahme</b></p>
+              <ion-segment [(ngModel)]="match.doParticipate" (ngModelChange)="selectParticipation(match)"
+                color="primary" scrollable class="center" [disabled]="match.isBlocked">
+                <ion-segment-button value="true">
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  <ion-label>Ja</ion-label>
+                </ion-segment-button>
+                <ion-segment-button value="false">
+                  <ion-label>Nein</ion-label>
+                  <ion-icon name="close-circle-outline"></ion-icon>
+                </ion-segment-button>
+              </ion-segment>
+            </div>
+            <div>
+            </div>
           </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-list>
-  </ion-grid>
+
+        </ion-list>
+        <ion-text class="center" *ngIf="matches?.length == 0">Keine bevorstehenden Spiele für {{ selectedClub.name }}
+          gefunden. </ion-text>
+      </ion-grid>
+
+      <ion-item>
+        <ion-label>Datum</ion-label>
+        <ion-datetime displayFormat="D MMM YYYY H:mm" min="2021" max="2023" placeholder="Datum wählen"
+          (ionChange)="test()" [(ngModel)]="datepickerinput">
+        </ion-datetime>
+      </ion-item>
+
+    </ion-col>
+  </ion-row>
 </ion-content>

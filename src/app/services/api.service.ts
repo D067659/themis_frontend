@@ -32,6 +32,15 @@ export class ApiService {
     return this.http.get(`${this.url}/api/clubs/${clubId}/matches`);
   }
 
+  // Participation API Calls
+  getParticipationForMatch(clubId, matchId) {
+    return this.http.get(`${this.url}/api/clubs/${clubId}/matches/${matchId}/participations`);
+  }
+
+  setParticipationForMatch(clubId, matchId, doParticipate) {
+    return this.http.put(`${this.url}/api/clubs/${clubId}/matches/${matchId}/participations`, { clubId, matchId, "hasTime": doParticipate });
+  }
+
   // Load user data including accessToken on startup
   async loadToken() {
     let user = await Storage.get({ key: USER_TOKEN_KEY });
@@ -66,6 +75,7 @@ export class ApiService {
 
   logout(): Promise<void> {
     this.isAuthenticated.next(false);
+    this.router.navigateByUrl('/', { replaceUrl: true });
     return Storage.remove({ key: USER_TOKEN_KEY });
   }
 }
