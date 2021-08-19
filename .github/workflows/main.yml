@@ -14,7 +14,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Build
-        run: ng run app:build:production
+        run: npm run appStartProd
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@v1.5.0
         with:
