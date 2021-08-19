@@ -1,0 +1,23 @@
+name: Build Themis App and Deploy on Firebase
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+      - name: Install Dependencies
+        run: npm install
+      - name: Build
+        run: npm run build --prod
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@v1.5.0
+        with:
+          args: deploy --only hosting
+        env:
+          FIREBASE_TOKEN: 1//09snfGLMAbvogCgYIARAAGAkSNwF-L9IrO7Ly1MYVcEmP4YI8yPaQng3TBYDb12PPXfhxm-XLFNZ3ScRE5gIovw5PxpE72bmKdWY
