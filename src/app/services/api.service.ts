@@ -60,6 +60,7 @@ export class ApiService {
 
   // Sign in a user and store its data
   login(credentials: { username, password }): Observable<any> {
+    console.log('got from env', this.url)
     return this.http.post(`${this.url}/login`, credentials).pipe(
       switchMap((user: { token }) => {
         this.currentAccessToken = user.token;
