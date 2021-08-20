@@ -1,8 +1,8 @@
 import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap, switchMap } from 'rxjs/operators';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { tap, switchMap, map, mergeMap, toArray } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { Storage } from '@capacitor/storage';
 
@@ -29,7 +29,13 @@ export class ApiService {
 
   // Match API Calls
   getAllMatches(clubId) {
-    return this.http.get(`${this.url}/api/clubs/${clubId}/matches`);
+    return this.http.get(`${this.url}/api/clubs/${clubId}/matches`).pipe(
+      mergeMap((matches: Array<any>) => from(matches)),
+      mergeMap((match: any) => this.getParticipationForMatch(match.clubId, match._id).pipe(
+        map((participation: any) => ({ ...match, doParticipate: participation?.hasTime }))
+      )),
+      toArray()
+    );
   }
 
   // Participation API Calls

@@ -14,6 +14,7 @@ export class MatchesPage implements OnInit {
   matches = [];
   datepickerinput = null;
   today = 2021;
+  dataLoaded = false;
 
   constructor(
     private apiService: ApiService,
@@ -29,40 +30,18 @@ export class MatchesPage implements OnInit {
       if (this.clubs.length == 1) {
         this.setSelectedClub(this.clubs[0]);
       }
+    } else {
+      this.getAllMatches();
     }
-    else {
-      this.getAllMatches()
-    }
-  }
-
-  getPossibleClubs() {
-    for (const club of this.apiService.currentUser.clubs) {
-      this.apiService.getClubInformation(club.clubId).subscribe((club: any) => {
-        this.clubs.push(club)
-      });
-    }
-  }
-
-  setSelectedClub(club) {
-    this.selectedClub = club;
-    this.apiService.currentUser.selectedClub = this.selectedClub;
-    this.getAllMatches()
   }
 
   getAllMatches() {
-    this.apiService.getAllMatches(this.selectedClub._id).subscribe((matches: Array<any>) => {
-      // Check for users participation for each match
-      matches.forEach(match => {
-        this.apiService.getParticipationForMatch(match.clubId, match._id).subscribe((participation: any) => {
-          match.doParticipate = participation?.hasTime;
-        })
+    this.apiService.getAllMatches(this.selectedClub._id).subscribe(matches => {
+      matches.sort((a, b) => {
+        return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
       });
-      this.matches = matches
-    });
-  }
-
-  toggleParticipation(match) {
-    match.doParticipate = false;
+      this.matches = matches;
+    })
   }
 
   selectParticipation(match) {
@@ -82,9 +61,23 @@ export class MatchesPage implements OnInit {
     })
   }
 
+  getPossibleClubs() {
+    for (const club of this.apiService.currentUser.clubs) {
+      this.apiService.getClubInformation(club.clubId).subscribe((club: any) => {
+        this.clubs.push(club)
+      });
+    }
+  }
+
+  setSelectedClub(club) {
+    this.selectedClub = club;
+    this.apiService.currentUser.selectedClub = this.selectedClub;
+    this.getAllMatches();
+  }
+
   resetSelectedClub() {
     this.selectedClub = null;
-    this.matches = null;
+    this.matches = [];
   }
 
   test() {
