@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController, MenuController } from '@ionic/angular';
 import { ApiService } from '../../services/api.service';
 
@@ -12,12 +12,15 @@ import { ApiService } from '../../services/api.service';
 export class LoginPage implements OnInit {
 
   credentials: FormGroup;
+  loginUrl = '';
+  redirectText = '';
 
   constructor(
     private fb: FormBuilder,
     private authService: ApiService,
     private alertController: AlertController,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private loadingController: LoadingController,
     public menu: MenuController
   ) { }
@@ -36,6 +39,9 @@ export class LoginPage implements OnInit {
       email: ['peter.widmer2@web.de', [Validators.required, Validators.email]],
       password: ['test1', [Validators.required, Validators.minLength(5)]],
     });
+
+    this.loginUrl = this.activatedRoute.snapshot.queryParamMap.get('navigateto') || '/home';
+    this.redirectText = this.activatedRoute.snapshot.queryParamMap.get('redirect') || '';
   }
 
   async login() {
@@ -45,13 +51,13 @@ export class LoginPage implements OnInit {
     this.authService.login(this.credentials.value).subscribe(
       async (res) => {
         await loading.dismiss();
-        this.router.navigateByUrl('/home', { replaceUrl: true });
+        this.router.navigateByUrl(this.loginUrl, { replaceUrl: true });
       },
       async (res) => {
         await loading.dismiss();
         const alert = await this.alertController.create({
           header: 'Login fehlgeschlagen',
-          message: res.error.error,
+          message: res.error.msg.message,
           buttons: ['OK'],
         });
 

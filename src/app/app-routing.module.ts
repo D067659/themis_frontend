@@ -33,6 +33,10 @@ const routes: Routes = [
     path: 'profile',
     loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfilePageModule),
     canLoad: [AuthGuard] // Secure all child pages
+  },
+  {
+    path: 'newmatch',
+    loadChildren: () => import('./pages/newmatch/newmatch.module').then( m => m.NewmatchPageModule)
   }
 ];
 

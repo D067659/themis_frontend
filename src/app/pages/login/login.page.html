@@ -4,6 +4,12 @@
 
 <ion-content>
 
+
+  <div *ngIf="redirectText" class="error">
+    <ion-icon class="icon" name="information-circle-outline"></ion-icon>
+    <i class="text">{{ redirectText }}</i>
+  </div>
+
   <form (ngSubmit)="login()" [formGroup]="credentials">
     <div class="input-group">
       <ion-item>

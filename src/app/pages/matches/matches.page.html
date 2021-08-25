@@ -9,6 +9,12 @@
 </ion-header>
 
 <ion-content>
+  <ion-fab *ngIf="selectedClub && hasAdminRole()" horizontal="end" vertical="bottom" slot="fixed"
+    style="margin: 0 10% 20% 0;">
+    <ion-fab-button color="primary" (click)="openNewMatchModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
   <ion-row>
     <ion-col size="12" size-md='6' offset-md='3'>
       <ion-button type="button" expand="block" fill="clear" (click)="resetSelectedClub()" *ngIf="selectedClub">
@@ -32,6 +38,7 @@
               <ion-card-subtitle>{{ match.isHome ? 'Heimspiel' : 'Auswärtsspiel' }} gegen {{ match.opponent }}
               </ion-card-subtitle>
               <ion-card-title>{{ match.startDate | date:'EE, dd.MM.yy' }}</ion-card-title>
+              <ion-button (click)="openNewMatchModal(match)">Edit</ion-button>
             </ion-card-header>
             <div>
               <ion-item text-wrap>
@@ -48,7 +55,7 @@
               </ion-item>
             </div>
             <div>
-              <ion-text style="text-align: center;"><b>Teilnahme</b></ion-text>
+              <ion-text class="center"><b>Teilnahme</b></ion-text>
               <ion-segment [(ngModel)]="match.doParticipate" (ionChange)="selectParticipation(match)" color="primary"
                 scrollable class="center" [disabled]="match.isBlocked">
                 <ion-segment-button value="true">
@@ -64,8 +71,8 @@
             <div>
             </div>
           </ion-card>
-
         </ion-list>
+
         <ion-text class="center" *ngIf="matches?.length == 0">Keine bevorstehenden Spiele für {{ selectedClub.name }}
           gefunden. </ion-text>
       </ion-grid>

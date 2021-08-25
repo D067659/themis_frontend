@@ -18,7 +18,12 @@ export class AuthGuard implements CanLoad {
         if (isAuthenticated) {
           return true;
         } else {
-          this.router.navigateByUrl('/login')
+          const navigation = this.router.getCurrentNavigation();
+          let url = '/';
+          if (navigation) {
+            url = navigation.extractedUrl.toString();
+          }
+          this.router.navigate(['/login'], { queryParams: { navigateto: url, redirect: 'Your session might be expired. Please log in again.' } });
           return false;
         }
       })

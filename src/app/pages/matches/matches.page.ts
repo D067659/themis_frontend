@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import { ApiService } from '../../services/api.service';
+import { NewmatchPage } from '../newmatch/newmatch.page';
+
 
 @Component({
   selector: 'app-matches',
@@ -13,15 +15,19 @@ export class MatchesPage implements OnInit {
   clubs = [];
   matches = [];
   datepickerinput = null;
-  today = 2021;
   dataLoaded = false;
 
   constructor(
     private apiService: ApiService,
     private toastController: ToastController,
+    private modalController: ModalController
   ) { }
 
   ngOnInit() {
+    this.loadSetup();
+  }
+
+  loadSetup() {
     this.selectedClub = this.apiService.currentUser.selectedClub;
 
     if (!this.selectedClub) {
@@ -71,13 +77,30 @@ export class MatchesPage implements OnInit {
 
   setSelectedClub(club) {
     this.selectedClub = club;
-    this.apiService.currentUser.selectedClub = this.selectedClub;
+    this.apiService.setSelectedClub(this.selectedClub);
     this.getAllMatches();
   }
 
   resetSelectedClub() {
     this.selectedClub = null;
-    this.matches = [];
+    this.apiService.removeSelectedClub();
+    if (this.clubs.length == 0) {
+      this.getPossibleClubs();
+    }
+  }
+
+  async openNewMatchModal(match?) {
+    const newMatch = await this.modalController.create({
+      component: NewmatchPage,
+      componentProps: {
+        existingMatch: match
+      }
+    });
+    return await newMatch.present();
+  }
+
+  hasAdminRole() {
+    return this.apiService.hasRoleForClub('admin', this.selectedClub._id);
   }
 
   test() {

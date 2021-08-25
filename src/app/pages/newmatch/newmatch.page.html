@@ -1,0 +1,106 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Neues Spiel</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()" slot="icon-only">
+        <ion-icon name="close-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="matchForm" (ngSubmit)="submitForm()" novalidate>
+    <div class="input-group">
+      <ion-item lines="full">
+        <ion-label position="floating">Stadt</ion-label>
+        <ion-input formControlName="city" type="text">
+        </ion-input>
+      </ion-item>
+
+      <div *ngIf="(errorControl.city.dirty || errorControl.city.touched) && errorControl.city.errors" class="errors">
+        <span *ngIf="errorControl.city.errors?.required">Pflichtfeld ausfüllen</span>
+        <span *ngIf="errorControl.city.errors?.minlength">Mindestens 4 Zeichen</span>
+      </div>
+
+      <ion-item lines="full">
+        <ion-label position="floating">Gegner</ion-label>
+        <ion-input formControlName="opponent" type="text"></ion-input>
+      </ion-item>
+
+      <div *ngIf="(errorControl.opponent.dirty || errorControl.opponent.touched) && errorControl.opponent.errors"
+        class="errors">
+        <span *ngIf="errorControl.opponent.errors?.required">Pflichtfeld ausfüllen</span>
+        <span *ngIf="errorControl.opponent.errors?.minlength">Mindestens 4 Zeichen</span>
+      </div>
+
+      <ion-item lines="full">
+        <ion-label position="floating">Datum</ion-label>
+        <ion-datetime (ionChange)="getDate($event)" formControlName="startDate" [min]="minDate" [value]="minDate"
+          displayFormat="DD MMM YYYY">
+        </ion-datetime>
+      </ion-item>
+
+      <ion-item lines="full">
+        <ion-label position="floating">Uhrzeit</ion-label>
+        <ion-datetime (ionChange)="getTime($event)" formControlName="startTime" displayFormat="HH:mm">
+        </ion-datetime>
+      </ion-item>
+
+
+      <ion-item lines="full">
+        <ion-label position="fixed">Heimspiel</ion-label>
+        <ion-checkbox color="primary" formControlName="startTime"></ion-checkbox>
+      </ion-item>
+
+      <ion-item lines="full">
+        <ion-label position="floating">Ort für Treffpunkt</ion-label>
+        <ion-input maxlength="10" formControlName="meetingPoint" type="text">
+        </ion-input>
+      </ion-item>
+
+      <div
+        *ngIf="(errorControl.meetingPoint.dirty || errorControl.meetingPoint.touched) && errorControl.meetingPoint.errors"
+        class="errors">
+        <span *ngIf="errorControl.meetingPoint.errors?.required">Pflichtfeld ausfüllen</span>
+        <span *ngIf="errorControl.meetingPoint.errors?.minlength">Mindestens 4 Zeichen</span>
+      </div>
+
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Zugesagt</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div *ngFor="let player of players">
+            <ion-item *ngIf="player.hasTime">
+
+            </ion-item>
+            Hi {{ player.email }}
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <ion-row>
+        <ion-col>
+          <ion-button type="submit" color="primary" expand="block" [disabled]="!matchForm.valid">Submit</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+  </form>
+</ion-content>
