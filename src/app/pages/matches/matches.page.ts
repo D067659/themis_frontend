@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
+import { filter, map, tap } from 'rxjs/operators';
 import { ApiService } from '../../services/api.service';
 import { NewmatchPage } from '../newmatch/newmatch.page';
 
@@ -42,12 +43,14 @@ export class MatchesPage implements OnInit {
   }
 
   getAllMatches() {
-    this.apiService.getAllMatches(this.selectedClub._id).subscribe(matches => {
-      matches.sort((a, b) => {
-        return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
-      });
-      this.matches = matches;
-    })
+    this.apiService.getAllMatches(this.selectedClub._id)
+      .subscribe(matches => {
+        this.matches = matches.filter(match => match.doParticipate !== undefined); // undefined = no participation required, null = no feedback yet
+        this.matches.sort((a, b) => {
+          return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+        });
+
+      })
   }
 
   selectParticipation(match) {
@@ -57,7 +60,7 @@ export class MatchesPage implements OnInit {
       const toast = await this.toastController.create({
         message: `Teilnahme wurde ${answer}`,
         duration: 2000,
-        color: res.hasTime ? 'success' : 'danger'
+        color: res.hasTime ? 'success' : 'warning'
       });
       toast.present();
 
@@ -96,15 +99,17 @@ export class MatchesPage implements OnInit {
         existingMatch: match
       }
     });
+
+    newMatch.onDidDismiss()
+      .then((event) => {
+        const dataChanged = event['data'];
+        if (dataChanged) { this.getAllMatches() }
+      });
     return await newMatch.present();
   }
 
   hasAdminRole() {
     return this.apiService.hasRoleForClub('admin', this.selectedClub._id);
-  }
-
-  test() {
-    console.log(this.datepickerinput);
   }
 
 }

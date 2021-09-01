@@ -42,6 +42,14 @@ export class ApiService {
     );
   }
 
+  createMatch(match: any) {
+    return this.http.post(`${this.url}/api/clubs/${match.clubId}/matches`, match);
+  }
+
+  updateMatch(match: any) {
+    return this.http.put(`${this.url}/api/clubs/${match.clubId}/matches/${match._id}`, match);
+  }
+
   // Participation API Calls
   getParticipationForMatch(clubId, matchId, playerId) {
     return this.http.get(`${this.url}/api/clubs/${clubId}/matches/${matchId}/participations/${playerId}`);

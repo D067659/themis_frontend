@@ -1,6 +1,7 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Neues Spiel</ion-title>
+    <ion-title *ngIf="matchInput">Spiel bearbeiten</ion-title>
+    <ion-title *ngIf="!matchInput">Neues Spiel</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dismissModal()" slot="icon-only">
         <ion-icon name="close-circle-outline"></ion-icon>
@@ -50,12 +51,12 @@
 
       <ion-item lines="full">
         <ion-label position="fixed">Heimspiel</ion-label>
-        <ion-checkbox color="primary" formControlName="startTime"></ion-checkbox>
+        <ion-checkbox color="primary" formControlName="isHome"></ion-checkbox>
       </ion-item>
 
       <ion-item lines="full">
         <ion-label position="floating">Ort für Treffpunkt</ion-label>
-        <ion-input maxlength="10" formControlName="meetingPoint" type="text">
+        <ion-input formControlName="meetingPoint" type="text">
         </ion-input>
       </ion-item>
 
@@ -66,39 +67,36 @@
         <span *ngIf="errorControl.meetingPoint.errors?.minlength">Mindestens 4 Zeichen</span>
       </div>
 
-
-      <ion-card>
+      <ion-card *ngIf="loaded">
         <ion-card-header>
-          <ion-card-subtitle>Zugesagt</ion-card-subtitle>
+          <ion-card-subtitle>Rückmeldungen</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
-          <div *ngFor="let player of players">
-            <ion-item *ngIf="player.hasTime">
-
-            </ion-item>
-            Hi {{ player.email }}
-          </div>
+          <ion-item *ngFor="let player of players">
+            <ion-label> {{ player.name }} </ion-label>
+            <ion-icon slot="end"
+              [color]="player.participation.hasTime ? 'success' : player.participation?.hasTime == false ? 'danger' : 'primary'"
+              [name]="player.participation.hasTime ? 'checkmark-circle-outline' : player.participation?.hasTime == false ? 'close-circle-outline' : 'help-circle-outline'">
+            </ion-icon>
+          </ion-item>
         </ion-card-content>
       </ion-card>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Spieler hinzufügen</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item *ngFor="let player of players">
+            <ion-label> {{ player.name }} </ion-label>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
 
       <ion-row>
         <ion-col>
-          <ion-button type="submit" color="primary" expand="block" [disabled]="!matchForm.valid">Submit</ion-button>
+          <ion-button type="submit" color="primary" expand="block" [disabled]="!matchForm.valid || !matchForm.dirty">
+            Speichern</ion-button>
         </ion-col>
       </ion-row>
     </div>

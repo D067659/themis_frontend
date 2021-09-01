@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { ModalController, NavParams } from '@ionic/angular';
-import { from, of } from 'rxjs';
-import { mergeMap, map, toArray, delay } from 'rxjs/operators';
+import { AlertController, ModalController, NavParams, ToastController } from '@ionic/angular';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-newmatch',
@@ -15,15 +15,16 @@ export class NewmatchPage implements OnInit {
   matchForm: FormGroup;
   minDate = new Date().toISOString();
   isSubmitted: boolean = false;
+  matchInput;
+  loaded = false;
 
-  constructor(public formBuilder: FormBuilder, private apiService: ApiService, private modalController: ModalController, private navParams: NavParams
+  constructor(public formBuilder: FormBuilder,
+    private apiService: ApiService,
+    private modalController: ModalController,
+    private navParams: NavParams,
+    private alertController: AlertController,
+    private toastController: ToastController
   ) { }
-
-  mapPlayerParticipation(param) {
-    return of(`retrieved new data with param ${param}`).pipe(
-      delay(1000)
-    )
-  }
 
   ngOnInit() {
     // Get all possible players for selected club
@@ -32,7 +33,8 @@ export class NewmatchPage implements OnInit {
     });
 
     // Check if edit match mode and set model accordingly
-    let existingMatch = this.navParams.get('existingMatch');
+    this.matchInput = this.navParams.get('existingMatch');
+    let existingMatch = this.matchInput;
     if (existingMatch) {
       const dateParts = existingMatch.startDate.split('T');
       existingMatch.startDateShort = dateParts[0];
@@ -41,10 +43,10 @@ export class NewmatchPage implements OnInit {
       // Check for existing participations
       this.apiService.getAllParticipations(this.apiService.currentUser.selectedClub._id, existingMatch._id).subscribe((participations: any) => {
         // Map participations to players
-
         this.players.forEach((player, index, arr) => {
           const playerParticipation = participations.find(participation => participation.playerId == player._id);
           arr[index].participation = playerParticipation;
+          this.loaded = true;
         });
       });
     };
@@ -54,9 +56,10 @@ export class NewmatchPage implements OnInit {
       opponent: [existingMatch?.opponent, [Validators.required, Validators.minLength(5)]],
       startDate: [existingMatch ? existingMatch.startDateShort : this.minDate],
       startTime: [existingMatch ? existingMatch.startTime : '18:00'],
-      isHome: [existingMatch?.isHome],
+      isHome: [existingMatch?.isHome ? true : false],
       meetingPoint: [existingMatch?.meetingPoint, [Validators.required, Validators.minLength(5)]],
-      participants: ['', [Validators.required]]
+      clubId: [existingMatch?.clubId ? existingMatch?.clubId : this.apiService.currentUser.selectedClub._id],
+      _id: [existingMatch?._id]
     })
   }
 
@@ -78,12 +81,52 @@ export class NewmatchPage implements OnInit {
     if (!this.matchForm.valid) {
       return false;
     } else {
-      console.log(this.matchForm.value)
+      let match = this.matchForm.value;
+      match.startDate = `${match.startDate.substr(0, 10)}T${match.startTime}Z`;
+
+      if (this.minDate > match.startDate) {
+        this.matchForm.get('startTime').setErrors({ serverValidationError: true });
+        return this.showAlert({ error: { msg: { message: { message: 'Das Datum darf nicht in der Vergangenheit liegen.' } } } })
+      }
+
+      if (match._id == null) { // new match
+        delete match._id;
+        this.apiService.createMatch(match).subscribe((res: any) => {
+          // Add creator to participants, otherwise nobody could see this game due to missing participants
+          this.apiService.setParticipationForMatch(res.clubId, res._id, null).subscribe((res: any) => {
+            this.showSuccess();
+            this.dismissModal();
+          });
+        }, (error) => { this.showAlert(error) })
+      } else { // update existing match
+        this.apiService.updateMatch(match).subscribe((res: any) => {
+          this.dismissModal();
+        }, (error) => { this.showAlert(error) })
+      }
+
     }
   }
 
+  async showAlert(err) {
+    const alert = await this.alertController.create({
+      header: 'Fehler',
+      message: err.error.msg.message.message,
+      buttons: ['OK'],
+    });
+
+    await alert.present();
+  }
+
+  async showSuccess() {
+    const toast = await this.toastController.create({
+      message: 'Das Spiel wurde erfolgreich angelegt',
+      duration: 2000
+    });
+    toast.present();
+  }
+
   dismissModal() {
-    this.modalController.dismiss();
+    this.modalController.dismiss('dataChanged');
   }
 
 }
