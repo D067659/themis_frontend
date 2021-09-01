@@ -93,7 +93,6 @@ export class ApiService {
       if (this.currentUser.expireDate && new Date(this.currentUser.expireDate) > new Date()) {
         this.isAuthenticated.next(true);
         this.currentAccessToken = this.currentUser.token;
-        console.log(this.currentUser)
       } else {
         this.isAuthenticated.next(false);
       }
