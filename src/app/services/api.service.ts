@@ -63,6 +63,16 @@ export class ApiService {
     return this.http.put(`${this.url}/api/clubs/${clubId}/matches/${matchId}/participations`, { clubId, matchId, "hasTime": doParticipate });
   }
 
+  askForParticipation(clubId, matchId, playerId) {
+    const body = {
+      playerId,
+      clubId,
+      matchId,
+      hasTime: null
+    }
+    return this.http.post(`${this.url}/api/clubs/${clubId}/matches/${matchId}/participations`, body);
+  }
+
   //// <!------- Helper functions ------->
   // Globally set the chosen club for user
   async setSelectedClub(club) {
@@ -114,12 +124,13 @@ export class ApiService {
   // Sign in a user and store its data
   login(credentials: { username, password }): Observable<any> {
     return this.http.post(`${this.url}/login`, credentials).pipe(
-      switchMap((user: { token, expireDate, expiresInHours }) => {
+      switchMap((user: any) => {
         this.currentAccessToken = user.token;
         user.expireDate = this.addHours(new Date(), user.expiresInHours)
         delete user.expiresInHours;
+        this.currentUser = user;
         const storeAccess = Storage.set({ key: USER_TOKEN_KEY, value: JSON.stringify(user) });
-        return from(Promise.all([storeAccess]));
+        return from(storeAccess);
       }),
       tap(_ => {
         this.isAuthenticated.next(true);

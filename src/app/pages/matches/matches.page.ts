@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
-import { filter, map, tap } from 'rxjs/operators';
+import { from } from 'rxjs';
+import { filter, map, mergeMap, tap, toArray } from 'rxjs/operators';
 import { ApiService } from '../../services/api.service';
 import { NewmatchPage } from '../newmatch/newmatch.page';
 
@@ -28,15 +29,15 @@ export class MatchesPage implements OnInit {
     this.loadSetup();
   }
 
-  loadSetup() {
+  async loadSetup() {
     this.selectedClub = this.apiService.currentUser.selectedClub;
 
     if (!this.selectedClub) {
-      this.getPossibleClubs()
-
-      if (this.clubs.length == 1) {
-        this.setSelectedClub(this.clubs[0]);
-      }
+      //this.getPossibleClubs()
+      this.getPossibleClubs().subscribe((clubs: any) => {
+        this.clubs = clubs;
+        if (this.clubs.length == 1) { this.setSelectedClub(this.clubs[0]); }
+      });
     } else {
       this.getAllMatches();
     }
@@ -71,12 +72,12 @@ export class MatchesPage implements OnInit {
   }
 
   getPossibleClubs() {
-    for (const club of this.apiService.currentUser.clubs) {
-      this.apiService.getClubInformation(club.clubId).subscribe((club: any) => {
-        this.clubs.push(club)
-      });
-    }
+    return from(this.apiService.currentUser.clubs).pipe(
+      mergeMap((club: any) => this.apiService.getClubInformation(club.clubId)),
+      toArray()
+    )
   }
+
 
   setSelectedClub(club) {
     this.selectedClub = club;
@@ -88,7 +89,7 @@ export class MatchesPage implements OnInit {
     this.selectedClub = null;
     this.apiService.removeSelectedClub();
     if (this.clubs.length == 0) {
-      this.getPossibleClubs();
+      this.getPossibleClubs().subscribe((clubs: any) => { this.clubs = clubs; });
     }
   }
 

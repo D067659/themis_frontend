@@ -8,13 +8,16 @@ import { NewmatchPageRoutingModule } from './newmatch-routing.module';
 import { NewmatchPage } from './newmatch.page';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { NgPipesModule } from 'ngx-pipes';
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    NewmatchPageRoutingModule
+    NewmatchPageRoutingModule,
+    NgPipesModule
   ],
   declarations: [NewmatchPage]
 })

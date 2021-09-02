@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { AlertController, ModalController, NavParams, ToastController } from '@ionic/angular';
-import { catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 @Component({
   selector: 'app-newmatch',
@@ -40,14 +38,13 @@ export class NewmatchPage implements OnInit {
       existingMatch.startDateShort = dateParts[0];
       existingMatch.startTime = dateParts[1];
 
-      // Check for existing participations
       this.apiService.getAllParticipations(this.apiService.currentUser.selectedClub._id, existingMatch._id).subscribe((participations: any) => {
         // Map participations to players
         this.players.forEach((player, index, arr) => {
-          const playerParticipation = participations.find(participation => participation.playerId == player._id);
+          const playerParticipation = participations.find(participation => participation.playerId == player._id) || 'not asked';
           arr[index].participation = playerParticipation;
-          this.loaded = true;
         });
+        this.loaded = true;
       });
     };
 
@@ -55,12 +52,22 @@ export class NewmatchPage implements OnInit {
       city: [existingMatch?.city, [Validators.required, Validators.minLength(4)]],
       opponent: [existingMatch?.opponent, [Validators.required, Validators.minLength(5)]],
       startDate: [existingMatch ? existingMatch.startDateShort : this.minDate],
-      startTime: [existingMatch ? existingMatch.startTime : '18:00'],
+      startTime: [existingMatch ? existingMatch.startTime : '18:00:00.000Z'],
       isHome: [existingMatch?.isHome ? true : false],
       meetingPoint: [existingMatch?.meetingPoint, [Validators.required, Validators.minLength(5)]],
       clubId: [existingMatch?.clubId ? existingMatch?.clubId : this.apiService.currentUser.selectedClub._id],
       _id: [existingMatch?._id]
     })
+  }
+
+  addToNewParticipantList(player) {
+    if (!player.new) {
+      player.participation = { hasTime: null };
+      player.new = true;
+    } else {
+      player.participation = "not asked";
+      player.new = false;
+    }
   }
 
   getDate(e) {
@@ -82,7 +89,7 @@ export class NewmatchPage implements OnInit {
       return false;
     } else {
       let match = this.matchForm.value;
-      match.startDate = `${match.startDate.substr(0, 10)}T${match.startTime}Z`;
+      match.startDate = `${match.startDate.substr(0, 10)}T${match.startTime}`;
 
       if (this.minDate > match.startDate) {
         this.matchForm.get('startTime').setErrors({ serverValidationError: true });
@@ -99,11 +106,19 @@ export class NewmatchPage implements OnInit {
           });
         }, (error) => { this.showAlert(error) })
       } else { // update existing match
-        this.apiService.updateMatch(match).subscribe((res: any) => {
-          this.dismissModal();
-        }, (error) => { this.showAlert(error) })
-      }
+        if (this.matchForm.dirty) {
+          this.apiService.updateMatch(match).subscribe((res: any) => {
+          }, (error) => { this.showAlert(error) })
+        }
 
+        const newParticipants = this.players.filter(p => p.new);
+        debugger;
+        for (const participant of newParticipants) {
+          this.apiService.askForParticipation(this.apiService.currentUser.selectedClub._id, this.matchForm.controls._id.value, participant._id).subscribe(
+            () => { }, (error) => { this.showAlert(error) });
+        }
+        this.dismissModal();
+      }
     }
   }
 
