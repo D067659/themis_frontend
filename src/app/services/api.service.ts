@@ -127,6 +127,14 @@ export class ApiService {
     )
   }
 
+  checkPlayerData(credentials) {
+    return this.http.get(`${this.url}/clubs/${credentials.clubId}/confirm/${credentials.confirmationCode}`);
+  }
+
+  register(credentials) {
+    return this.http.post(`${this.url}/clubs/${credentials.clubId}/confirm/${credentials.confirmationCode}`, credentials);
+  }
+
   logout(): Promise<void> {
     this.isAuthenticated.next(false);
     this.router.navigateByUrl('/', { replaceUrl: true });

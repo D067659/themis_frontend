@@ -37,6 +37,10 @@ const routes: Routes = [
   {
     path: 'newmatch',
     loadChildren: () => import('./pages/newmatch/newmatch.module').then( m => m.NewmatchPageModule)
+  },
+  {
+    path: 'register',
+    loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule)
   }
 ];
 
