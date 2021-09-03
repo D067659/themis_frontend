@@ -55,7 +55,7 @@ export class NewmatchPage implements OnInit {
       startDate: [existingMatch ? existingMatch.startDateShort : this.minDate],
       startTime: [existingMatch ? existingMatch.startTime : '18:00:00.000Z'],
       isHome: [existingMatch?.isHome ? true : false],
-      meetingPoint: [existingMatch?.meetingPoint, [Validators.required, Validators.minLength(5)]],
+      meetingPoint: [existingMatch?.meetingPoint, [Validators.required, Validators.minLength(4)]],
       clubId: [existingMatch?.clubId ? existingMatch?.clubId : this.apiService.currentUser.selectedClub._id],
       _id: [existingMatch?._id]
     })
