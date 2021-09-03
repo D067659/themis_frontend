@@ -45,6 +45,7 @@ export class NewmatchPage implements OnInit {
           arr[index].participation = playerParticipation;
         });
         this.loaded = true;
+        console.log('players manipulated', this.players)
       });
     };
 
@@ -112,7 +113,6 @@ export class NewmatchPage implements OnInit {
         }
 
         const newParticipants = this.players.filter(p => p.new);
-        debugger;
         for (const participant of newParticipants) {
           this.apiService.askForParticipation(this.apiService.currentUser.selectedClub._id, this.matchForm.controls._id.value, participant._id).subscribe(
             () => { }, (error) => { this.showAlert(error) });

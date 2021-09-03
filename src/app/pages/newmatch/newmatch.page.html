@@ -99,6 +99,15 @@
         </ion-card-content>
       </ion-card>
 
+      <ion-card *ngIf="!loaded">
+        <ion-card-content>
+          <ion-item lines="none">
+            <ion-label text-wrap>Sobald ein Spiel angelegt ist, kannst du Spieler hinzufügen</ion-label>
+            <ion-icon slot="start" color="primary" name="information-outline"></ion-icon>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+
       <ion-row>
         <ion-col>
           <ion-button type="submit" color="primary" expand="block" [disabled]="!matchForm.valid">
