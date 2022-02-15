@@ -19,10 +19,10 @@
           <ion-list-header>Account</ion-list-header>
 
           <ion-list auto-hide="false" *ngFor="let a of accountPages; let i = index">
-            <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false"
+            <ion-item routerDirection="root" [routerLink]="[a.url]" lines="none" detail="false"
               routerLinkActive="selected">
-              <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
-              <ion-label>{{ p.title }}</ion-label>
+              <ion-icon slot="start" [ios]="a.icon + '-outline'" [md]="a.icon + '-sharp'"></ion-icon>
+              <ion-label>{{ a.title }}</ion-label>
             </ion-item>
           </ion-list>
 
