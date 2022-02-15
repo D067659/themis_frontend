@@ -3,28 +3,37 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title *ngIf="clubs.length < 2">Dein Verein</ion-title>
-    <ion-title *ngIf="clubs.length >= 2">Deine Vereine</ion-title>
+    <ion-title *ngIf="selectedClub">{{ selectedClub.name }}</ion-title>
+    <ion-title *ngIf="!selectedClub">Wähle deinen Verein</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
-
-  <ion-grid>
-    <ion-list *ngFor="let club of clubs">
-      <ion-row>
-        <ion-col size="12" size-md='6' offset-md='3'>
-          <ion-card>
+  <ion-row>
+    <ion-col size="12" size-md='6' offset-md='3'>
+      <ion-button type="button" expand="block" fill="clear" (click)="resetSelectedClub()" *ngIf="selectedClub">
+        Ausgewählter
+        Verein ändern
+      </ion-button>
+      <ion-grid *ngIf="!selectedClub">
+        <ion-list *ngFor="let club of clubs">
+          <ion-card button (click)="setSelectedClub(club)">
             <ion-card-content>
               {{ club.name }}
-              {{ club.invitationCode }}
             </ion-card-content>
           </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-list>
-  </ion-grid>
+        </ion-list>
+      </ion-grid>
+
+      <ion-grid *ngIf="selectedClub">
+        <ion-list *ngFor="let player of players">
+          <ion-label>{{ player.name }} ({{ player.email }})</ion-label>
+        </ion-list>
+
+      </ion-grid>
+    </ion-col>
+  </ion-row>
 
 
 

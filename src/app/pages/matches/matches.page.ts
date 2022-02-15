@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 import { from } from 'rxjs';
-import { filter, map, mergeMap, tap, toArray } from 'rxjs/operators';
+import { mergeMap, toArray } from 'rxjs/operators';
 import { ApiService } from '../../services/api.service';
 import { NewmatchPage } from '../newmatch/newmatch.page';
 
@@ -78,11 +78,9 @@ export class MatchesPage implements OnInit {
     )
   }
 
-
   setSelectedClub(club) {
     this.selectedClub = club;
-    this.apiService.setSelectedClub(this.selectedClub);
-    this.getAllMatches();
+    this.apiService.setSelectedClub(this.selectedClub).then(() => { this.getAllMatches() });
   }
 
   resetSelectedClub() {

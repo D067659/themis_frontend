@@ -11,8 +11,8 @@ export class AppComponent {
   public appPages = [
     { title: 'Home', url: '/home', icon: 'home' },
     { title: 'Verein', url: '/club', icon: 'people-circle' },
-    { title: 'Spiele', url: '/matches', icon: 'megaphone' },
-    { title: 'Profil', url: '/profile', icon: 'person' }
+    { title: 'Spiele', url: '/matches', icon: 'megaphone' }
+    // { title: 'Profil', url: '/profile', icon: 'person' }
   ];
 
   constructor(public authService: ApiService, private router: Router) { }
