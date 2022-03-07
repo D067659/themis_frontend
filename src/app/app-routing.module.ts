@@ -15,6 +15,11 @@ const routes: Routes = [
     canLoad: [AutoLoginGuard] // Check if we should show the introduction or forward to inside
   },
   {
+    path: 'register',
+    loadChildren: () => import('./pages/register/register.module').then(m => m.RegisterPageModule),
+    canLoad: [AutoLoginGuard] // Check if we should show the introduction or forward to inside
+  },
+  {
     path: 'home',
     loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule),
     canLoad: [AuthGuard] // Secure all child pages
@@ -36,11 +41,7 @@ const routes: Routes = [
   },
   {
     path: 'newmatch',
-    loadChildren: () => import('./pages/newmatch/newmatch.module').then( m => m.NewmatchPageModule)
-  },
-  {
-    path: 'register',
-    loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule)
+    loadChildren: () => import('./pages/newmatch/newmatch.module').then(m => m.NewmatchPageModule)
   }
 ];
 

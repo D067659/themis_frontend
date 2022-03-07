@@ -12,42 +12,40 @@
 
 <ion-content>
   <form [formGroup]="matchForm" (ngSubmit)="submitForm()" novalidate>
-    <div class="input-group">
+    <div>
       <ion-item lines="full">
         <ion-label position="floating">Stadt</ion-label>
-        <ion-input formControlName="city" type="text">
-        </ion-input>
+        <ion-input formControlName="city" type="text"> </ion-input>
+        <ion-note slot="error" *ngIf="(city.dirty || city.touched) && city.errors">Ungültige Stadt
+        </ion-note>
       </ion-item>
-
-      <div *ngIf="(errorControl.city.dirty || errorControl.city.touched) && errorControl.city.errors" class="errors">
-        <span *ngIf="errorControl.city.errors?.required">Pflichtfeld ausfüllen</span>
-        <span *ngIf="errorControl.city.errors?.minlength">Mindestens 4 Zeichen</span>
-      </div>
 
       <ion-item lines="full">
         <ion-label position="floating">Gegner</ion-label>
         <ion-input formControlName="opponent" type="text"></ion-input>
+        <ion-note slot="error" *ngIf="(opponent.dirty || opponent.touched) && opponent.errors">
+          Ungültiger Gegner
+        </ion-note>
       </ion-item>
 
-      <div *ngIf="(errorControl.opponent.dirty || errorControl.opponent.touched) && errorControl.opponent.errors"
-        class="errors">
-        <span *ngIf="errorControl.opponent.errors?.required">Pflichtfeld ausfüllen</span>
-        <span *ngIf="errorControl.opponent.errors?.minlength">Mindestens 4 Zeichen</span>
-      </div>
-
-      <ion-item lines="full">
-        <ion-label position="floating">Datum</ion-label>
-        <ion-datetime (ionChange)="getDate($event)" formControlName="startDate" [min]="minDate" [value]="minDate"
-          displayFormat="DD MMM YYYY">
-        </ion-datetime>
+      <ion-item id="open-modal">
+        <ion-label>Datum und Uhrzeit</ion-label>
+        <ion-text slot="end">{{ formattedDate }} </ion-text>
       </ion-item>
 
-      <ion-item lines="full">
-        <ion-label position="floating">Uhrzeit</ion-label>
-        <ion-datetime (ionChange)="getTime($event)" formControlName="startTime" displayFormat="HH:mm">
-        </ion-datetime>
-      </ion-item>
-
+      <ion-modal trigger="open-modal" [initialBreakpoint]="0.6" [breakpoints]="[0, 0.6, 1]">
+        <ng-template>
+          <ion-content>
+            <ion-datetime #datetime formControlName="startDate" presentation="date-time" showDefaultButtons=true
+              size="cover" (ionChange)="dateChanged()">
+              <ion-buttons slot="buttons">
+                <ion-button (click)="closeDateTimePicker()" color="danger" slot="start">Abbrechen</ion-button>
+                <ion-button (click)="selectDateTimePicker()" color="primary" slot="end">Übernehmen</ion-button>
+              </ion-buttons>
+            </ion-datetime>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
 
       <ion-item lines="full">
         <ion-label position="fixed">Heimspiel</ion-label>
@@ -56,16 +54,11 @@
 
       <ion-item lines="full">
         <ion-label position="floating">Ort für Treffpunkt</ion-label>
-        <ion-input formControlName="meetingPoint" type="text">
-        </ion-input>
+        <ion-input formControlName="meetingPoint" type="text"></ion-input>
+        <ion-note slot="error" *ngIf="(meetingPoint.dirty || meetingPoint.touched) && meetingPoint.errors">Ungültiger
+          Treffpunkt
+        </ion-note>
       </ion-item>
-
-      <div
-        *ngIf="(errorControl.meetingPoint.dirty || errorControl.meetingPoint.touched) && errorControl.meetingPoint.errors"
-        class="errors">
-        <span *ngIf="errorControl.meetingPoint.errors?.required">Pflichtfeld ausfüllen</span>
-        <span *ngIf="errorControl.meetingPoint.errors?.minlength">Mindestens 4 Zeichen</span>
-      </div>
 
       <ion-card *ngIf="loaded">
         <ion-card-header>

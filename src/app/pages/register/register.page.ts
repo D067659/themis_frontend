@@ -7,7 +7,7 @@ import { ApiService } from 'src/app/services/api.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
-  styleUrls: ['./register.page.scss'],
+  styleUrls: ['../login/login.page.scss'],
 })
 export class RegisterPage implements OnInit {
 
@@ -31,15 +31,13 @@ export class RegisterPage implements OnInit {
       menu.swipeGesture = false;
     });
   }
-  ionViewDidLeave() {
-    this.menu.enable(true);
-  }
+
   async ngOnInit() {
     this.credentials = this.fb.group({
       email: [this.activatedRoute.snapshot.queryParamMap.get('email') || '', [Validators.required, Validators.email]],
       confirmationCode: [this.activatedRoute.snapshot.queryParamMap.get('confirmationCode'), [Validators.required]],
       clubId: [this.activatedRoute.snapshot.queryParamMap.get('club'), [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(5)]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       name: ['', [Validators.required, Validators.minLength(5)]],
     });
 
@@ -140,7 +138,7 @@ export class RegisterPage implements OnInit {
   }
 
   get name() {
-    return this.credentials.get('email');
+    return this.credentials.get('name');
   }
 
   get password() {

@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { AlertController, ModalController, NavParams, ToastController } from '@ionic/angular';
+import { AlertController, IonDatetime, ModalController, NavParams, ToastController } from '@ionic/angular';
+import { format, parseISO } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
 
 @Component({
   selector: 'app-newmatch',
@@ -12,9 +14,11 @@ export class NewmatchPage implements OnInit {
   players: any = [];
   matchForm: FormGroup;
   minDate = new Date().toISOString();
+  formattedDate = '';
   isSubmitted: boolean = false;
   matchInput;
   loaded = false;
+  @ViewChild(IonDatetime) datetime: IonDatetime;
 
   constructor(public formBuilder: FormBuilder,
     private apiService: ApiService,
@@ -34,10 +38,6 @@ export class NewmatchPage implements OnInit {
     this.matchInput = this.navParams.get('existingMatch');
     let existingMatch = this.matchInput;
     if (existingMatch) {
-      const dateParts = existingMatch.startDate.split('T');
-      existingMatch.startDateShort = dateParts[0];
-      existingMatch.startTime = dateParts[1];
-
       this.apiService.getAllParticipations(this.apiService.currentUser.selectedClub._id, existingMatch._id).subscribe((participations: any) => {
         // Map participations to players
         this.players.forEach((player, index, arr) => {
@@ -45,20 +45,21 @@ export class NewmatchPage implements OnInit {
           arr[index].participation = playerParticipation;
         });
         this.loaded = true;
-        console.log('players manipulated', this.players)
       });
     };
 
     this.matchForm = this.formBuilder.group({
-      city: [existingMatch?.city, [Validators.required, Validators.minLength(4)]],
-      opponent: [existingMatch?.opponent, [Validators.required, Validators.minLength(5)]],
-      startDate: [existingMatch ? existingMatch.startDateShort : this.minDate],
-      startTime: [existingMatch ? existingMatch.startTime : '18:00:00.000Z'],
+      city: [existingMatch?.city, [Validators.required, Validators.minLength(4), Validators.maxLength(20)]],
+      opponent: [existingMatch?.opponent, [Validators.required, Validators.minLength(4), Validators.maxLength(20)]],
+      startDate: [existingMatch ? existingMatch.startDate : this.minDate],
       isHome: [existingMatch?.isHome ? true : false],
-      meetingPoint: [existingMatch?.meetingPoint, [Validators.required, Validators.minLength(4)]],
+      meetingPoint: [existingMatch?.meetingPoint, [Validators.required, Validators.maxLength(20)]],
       clubId: [existingMatch?.clubId ? existingMatch?.clubId : this.apiService.currentUser.selectedClub._id],
       _id: [existingMatch?._id]
-    })
+    });
+
+    this.setFormattedDate();
+
   }
 
   addToNewParticipantList(player) {
@@ -71,14 +72,6 @@ export class NewmatchPage implements OnInit {
     }
   }
 
-  getDate(e) {
-    this.matchForm.get('startDate').setValue(e.target.value, { onlyself: true })
-  }
-
-  getTime(e) {
-    this.matchForm.get('startTime').setValue(e.target.value, { onlyself: true })
-  }
-
   get errorControl() {
     return this.matchForm.controls;
   }
@@ -86,40 +79,53 @@ export class NewmatchPage implements OnInit {
   submitForm() {
     // ADD CLUBID RIGHT HERE
     this.isSubmitted = true;
-    if (!this.matchForm.valid) {
-      return false;
-    } else {
-      let match = this.matchForm.value;
-      match.startDate = `${match.startDate.substr(0, 10)}T${match.startTime}`;
+    if (!this.matchForm.valid) { return false; };
 
-      if (this.minDate > match.startDate) {
-        this.matchForm.get('startTime').setErrors({ serverValidationError: true });
-        return this.showAlert({ error: { msg: { message: { message: 'Das Datum darf nicht in der Vergangenheit liegen.' } } } })
-      }
+    let match = this.matchForm.value;
 
-      if (match._id == null) { // new match
-        delete match._id;
-        this.apiService.createMatch(match).subscribe((res: any) => {
-          // Add creator to participants, otherwise nobody could see this game due to missing participants
-          this.apiService.setParticipationForMatch(res.clubId, res._id, null).subscribe((res: any) => {
-            this.showSuccess();
-            this.dismissModal();
-          });
-        }, (error) => { this.showAlert(error) })
-      } else { // update existing match
-        if (this.matchForm.dirty) {
-          this.apiService.updateMatch(match).subscribe((res: any) => {
-          }, (error) => { this.showAlert(error) })
-        }
-
-        const newParticipants = this.players.filter(p => p.new);
-        for (const participant of newParticipants) {
-          this.apiService.askForParticipation(this.apiService.currentUser.selectedClub._id, this.matchForm.controls._id.value, participant._id).subscribe(
-            () => { }, (error) => { this.showAlert(error) });
-        }
-        this.dismissModal();
-      }
+    if (this.minDate > match.startDate) {
+      this.matchForm.get('startDate').setErrors({ serverValidationError: true });
+      return this.showAlert({ error: { msg: { message: { message: 'Das Datum darf nicht in der Vergangenheit liegen.' } } } })
     }
+
+    if (match._id == null) { // new match
+      delete match._id;
+      this.apiService.createMatch(match).subscribe((res: any) => {
+        // Add creator to participants, otherwise nobody could see this game due to missing participants
+        this.apiService.setParticipationForMatch(res.clubId, res._id, null).subscribe((res: any) => {
+          this.showSuccess();
+          this.dismissModal();
+        });
+      }, (error) => { this.showAlert(error) })
+    } else { // update existing match
+      if (this.matchForm.dirty) {
+        this.apiService.updateMatch(match).subscribe((res: any) => {
+        }, (error) => { this.showAlert(error) })
+      }
+
+      const newParticipants = this.players.filter(p => p.new);
+      for (const participant of newParticipants) {
+        this.apiService.askForParticipation(this.apiService.currentUser.selectedClub._id, this.matchForm.controls._id.value, participant._id).subscribe(
+          () => { }, (error) => { this.showAlert(error) });
+      }
+      this.dismissModal();
+    }
+  }
+
+  setFormattedDate() {
+    // TODO : Evtl brauchen wir das hier noch, wenn die Zeitstempel wieder komisch sind
+    // Get the time zone set on the user's device
+    // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // console.log('usertimezone', userTimeZone)
+    // const date = new Date('2014-10-25T10:46:20Z');
+    // const zonedTime = utcToZonedTime(this.matchForm.get('startDate').value, userTimeZone);
+    // console.log('asdf', zonedTime)
+
+    this.formattedDate = format(parseISO(this.matchForm.get('startDate').value), 'HH:mm, d. MMM yyyy');
+  }
+
+  dateChanged() {
+    this.formattedDate = format(parseISO(this.matchForm.get('startDate').value), 'HH:mm, d. MMM yyyy');
   }
 
   async showAlert(err) {
@@ -142,6 +148,27 @@ export class NewmatchPage implements OnInit {
 
   dismissModal() {
     this.modalController.dismiss('dataChanged');
+  }
+
+  closeDateTimePicker() {
+    this.datetime.cancel(true);
+  }
+
+  selectDateTimePicker() {
+    this.datetime.confirm(true);
+  }
+
+  // Easy access for form fields
+  get city() {
+    return this.matchForm.get('city');
+  }
+
+  get opponent() {
+    return this.matchForm.get('opponent');
+  }
+
+  get meetingPoint() {
+    return this.matchForm.get('meetingPoint');
   }
 
 }

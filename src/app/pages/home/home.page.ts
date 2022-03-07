@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomePage implements OnInit {
 
-  constructor() { }
+  constructor(
+    private modalController: ModalController
+
+  ) { }
 
   ngOnInit() {
+  }
+
+  async dismissModal() {
+    console.log('method triggered');
+    await this.modalController.dismiss();
   }
 
 }

@@ -39,7 +39,8 @@
               </ion-card-subtitle>
               <ion-row>
                 <ion-card-title>{{ match.startDate | date:'EE, dd.MM.yy' }} </ion-card-title>
-                <ion-button (click)="openNewMatchModal(match)" fill="clear" size="small" style="margin-top: 0%;">
+                <ion-button *ngIf="hasAdminRole()" (click)="openNewMatchModal(match)" fill="clear" size="small"
+                  style="margin-top: 0%;">
                   <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
                 </ion-button>
               </ion-row>

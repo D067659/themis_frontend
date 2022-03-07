@@ -31,13 +31,15 @@ export class LoginPage implements OnInit {
       menu.swipeGesture = false;
     });
   }
+
   ionViewDidLeave() {
     this.menu.enable(true);
   }
+
   ngOnInit() {
     this.credentials = this.fb.group({
-      email: ['peter.widmer2@web.de', [Validators.required, Validators.email]],
-      password: ['test1', [Validators.required, Validators.minLength(5)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
     });
 
     this.loginUrl = this.activatedRoute.snapshot.queryParamMap.get('navigateto') || '/home';

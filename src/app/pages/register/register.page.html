@@ -5,41 +5,60 @@
       Bitte unten registrieren.</i>
   </div>
 
-  <form (ngSubmit)="register()" [formGroup]="credentials">
-    <div class="input-group">
-      <ion-item>
-        <ion-input type="email" placeholder="Email" formControlName="email"></ion-input>
-      </ion-item>
-      <div *ngIf="(email.dirty || email.touched) && email.errors" class="errors">
-        <span *ngIf="email.errors?.required">Email is required</span>
-        <span *ngIf="email.errors?.email">Email is invalid</span>
-      </div>
-
-      <ion-item>
-        <ion-input type="text" placeholder="Name" formControlName="name"></ion-input>
-      </ion-item>
-      <div *ngIf="(name.dirty || name.touched) && name.errors" class="errors">
-        <span *ngIf="name.errors?.required">Name is required</span>
-        <span *ngIf="name.errors?.email">Name is invalid</span>
-      </div>
-
-      <ion-item>
-        <ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
-      </ion-item>
-      <div *ngIf="(password.dirty || password.touched) && password.errors" class="errors">
-        <span *ngIf="password.errors?.required">Password is required</span>
-        <span *ngIf="password.errors?.minlength">Password needs to be 6 characters</span>
-      </div>
+  <div class="login-section ion-padding">
+    <div class="heading ion-padding">
+      <h1>Erstelle einen Account!</h1>
     </div>
 
-    <ion-button type="submit" expand="block" [disabled]="!credentials.valid">Registrierung abschliessen</ion-button>
+    <form (ngSubmit)="register()" [formGroup]="credentials">
 
-    <ion-button type="button" expand="block" color="light" fill="clear" (click)="navToLogin()"><u>Zum Login</u>
-    </ion-button>
+      <div class="login-form ion-padding">
+        <div class="form-input">
+          <ion-icon name="mail-outline"> </ion-icon>
+          <ion-item>
+            <ion-label position="floating">E-Mail</ion-label>
+            <ion-input type="text" placeholder="E-Mail" formControlName="email"></ion-input>
+            <ion-note slot="error" *ngIf="(email.dirty || email.touched) && email.errors">Ungültige E-Mail-Adresse
+            </ion-note>
+          </ion-item>
+        </div>
 
-    <ion-button type="button" expand="block" color="tertiary">
-      <ion-icon name="logo-google" slot="start"></ion-icon>
-      Mit meinem Google Account registrieren
-    </ion-button>
-  </form>
+        <div class="form-input">
+          <ion-icon name="person-outline"> </ion-icon>
+          <ion-item>
+            <ion-label position="floating">Vor- und Zuname</ion-label>
+            <ion-input type="text" formControlName="name"></ion-input>
+            <ion-note slot="error" *ngIf="(name.dirty || name.touched) && name.errors">Mindestens 5 Zeichen
+            </ion-note>
+          </ion-item>
+        </div>
+
+        <div class="form-input">
+          <ion-icon name="lock-closed-outline"> </ion-icon>
+          <ion-item>
+            <ion-label position="floating">Passwort</ion-label>
+            <ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
+            <ion-note slot="error" *ngIf="(password.dirty || password.touched) && password.errors">Mindestens 6 Zeichen
+            </ion-note>
+          </ion-item>
+        </div>
+      </div>
+
+      <div class="action-buttons ion-padding">
+        <ion-button type="submit" expand="large" class="login-button" [disabled]="!credentials.valid">Registrieren
+        </ion-button>
+
+        <ion-button type="button" expand="large" color="light" fill="clear" (click)="navToLogin()">
+          <p><u>Zurück zum
+              Login</u></p>
+        </ion-button>
+      </div>
+
+      <!-- <ion-button type="button" expand="block" color="tertiary">
+        <ion-icon name="logo-google" slot="start"></ion-icon>
+        Mit meinem Google Account registrieren
+      </ion-button> -->
+    </form>
+  </div>
+
 </ion-content>
