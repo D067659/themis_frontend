@@ -36,8 +36,8 @@
       <ion-modal trigger="open-modal" [initialBreakpoint]="0.6" [breakpoints]="[0, 0.6, 1]">
         <ng-template>
           <ion-content>
-            <ion-datetime #datetime formControlName="startDate" presentation="date-time" showDefaultButtons=true
-              size="cover" (ionChange)="dateChanged()">
+            <ion-datetime #datetime formControlName="startDate" presentation="date-time" size="cover"
+              (ionChange)="setFormattedDate()">
               <ion-buttons slot="buttons">
                 <ion-button (click)="closeDateTimePicker()" color="danger" slot="start">Abbrechen</ion-button>
                 <ion-button (click)="selectDateTimePicker()" color="primary" slot="end">Übernehmen</ion-button>

@@ -94,7 +94,7 @@ export class NewmatchPage implements OnInit {
         // Add creator to participants, otherwise nobody could see this game due to missing participants
         this.apiService.setParticipationForMatch(res.clubId, res._id, null).subscribe((res: any) => {
           this.showSuccess();
-          this.dismissModal();
+          this.dismissModal(true);
         });
       }, (error) => { this.showAlert(error) })
     } else { // update existing match
@@ -108,23 +108,11 @@ export class NewmatchPage implements OnInit {
         this.apiService.askForParticipation(this.apiService.currentUser.selectedClub._id, this.matchForm.controls._id.value, participant._id).subscribe(
           () => { }, (error) => { this.showAlert(error) });
       }
-      this.dismissModal();
+      this.dismissModal(true);
     }
   }
 
   setFormattedDate() {
-    // TODO : Evtl brauchen wir das hier noch, wenn die Zeitstempel wieder komisch sind
-    // Get the time zone set on the user's device
-    // const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // console.log('usertimezone', userTimeZone)
-    // const date = new Date('2014-10-25T10:46:20Z');
-    // const zonedTime = utcToZonedTime(this.matchForm.get('startDate').value, userTimeZone);
-    // console.log('asdf', zonedTime)
-
-    this.formattedDate = format(parseISO(this.matchForm.get('startDate').value), 'HH:mm, d. MMM yyyy');
-  }
-
-  dateChanged() {
     this.formattedDate = format(parseISO(this.matchForm.get('startDate').value), 'HH:mm, d. MMM yyyy');
   }
 
@@ -146,8 +134,8 @@ export class NewmatchPage implements OnInit {
     toast.present();
   }
 
-  dismissModal() {
-    this.modalController.dismiss('dataChanged');
+  dismissModal(refreshPage?) {
+    this.modalController.dismiss(refreshPage);
   }
 
   closeDateTimePicker() {

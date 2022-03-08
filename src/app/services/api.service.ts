@@ -31,6 +31,12 @@ export class ApiService {
     return this.http.get(`${this.url}/api/clubs/${clubId}/players`);
   }
 
+  removePlayerFromClub(clubId, playerId) {
+    console.log('club:', clubId);
+    console.log('player', playerId);
+    return this.http.delete(`${this.url}/api/clubs/${clubId}/players/${playerId}`);
+  }
+
   // Match API Calls
   getAllMatches(clubId) {
     return this.http.get(`${this.url}/api/clubs/${clubId}/matches`).pipe(
@@ -47,6 +53,7 @@ export class ApiService {
   }
 
   updateMatch(match: any) {
+    console.log('updating match', match);
     return this.http.put(`${this.url}/api/clubs/${match.clubId}/matches/${match._id}`, match);
   }
 

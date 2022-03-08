@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { AlertController } from '@ionic/angular';
 import { from } from 'rxjs';
 import { mergeMap, toArray } from 'rxjs/operators';
 import { ApiService } from '../../services/api.service';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-club',
@@ -18,6 +20,8 @@ export class ClubPage implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private alertController: AlertController,
+    public platform: Platform
   ) { }
 
   ngOnInit() {
@@ -62,6 +66,46 @@ export class ClubPage implements OnInit {
     this.apiService.getPlayersForClub(this.apiService.currentUser.selectedClub._id).subscribe((players: any) => {
       this.players = players
     });
+  }
+
+  async promtForDeletion(player) {
+    const alert = await this.alertController.create({
+      header: 'Löschen bestätigen!',
+      message: `Bitte bestätigen, dass Sie ${player.name} aus dem Verein entfernen möchten.`,
+      buttons: [
+        {
+          text: 'Abbrechen',
+          role: 'cancel',
+          cssClass: 'secondary'
+        }, {
+          text: 'Bestätigen',
+          cssClass: 'danger',
+          handler: () => {
+            this.removePlayerFromClub(player);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async removePlayerFromClub(player) {
+    this.apiService.removePlayerFromClub(this.apiService.currentUser.selectedClub._id, player._id).subscribe(() => {
+      this.players = this.players.filter(remainingPlayers => remainingPlayers._id !== player._id);
+    });;
+  }
+
+  hasAdminRole() {
+    return this.apiService.hasRoleForClub('admin', this.selectedClub._id);
+  }
+
+  isDesktop() {
+    return this.platform.is('desktop');
+  }
+
+  entryIsMe(player) {
+    return player._id == this.apiService.currentUser._id;
   }
 
 }

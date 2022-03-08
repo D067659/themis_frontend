@@ -18,13 +18,13 @@
         <ion-list id="labels-list" style="position: absolute; bottom: 5%;">
           <ion-list-header>Account</ion-list-header>
 
-          <ion-list auto-hide="false" *ngFor="let a of accountPages; let i = index">
+          <ion-menu-toggle auto-hide="false" *ngFor="let a of accountPages; let i = index">
             <ion-item routerDirection="root" [routerLink]="[a.url]" lines="none" detail="false"
               routerLinkActive="selected">
               <ion-icon slot="start" [ios]="a.icon + '-outline'" [md]="a.icon + '-sharp'"></ion-icon>
               <ion-label>{{ a.title }}</ion-label>
             </ion-item>
-          </ion-list>
+          </ion-menu-toggle>
 
           <ion-item button (click)="logout()" lines="none" detail="false">
             <ion-icon slot="start" ios="log-out-outline" md="log-out-sharp"></ion-icon>

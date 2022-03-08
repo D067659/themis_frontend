@@ -4,7 +4,7 @@ import { from } from 'rxjs';
 import { mergeMap, toArray } from 'rxjs/operators';
 import { ApiService } from '../../services/api.service';
 import { NewmatchPage } from '../newmatch/newmatch.page';
-
+import { utcToZonedTime } from 'date-fns-tz';
 
 @Component({
   selector: 'app-matches',
@@ -50,7 +50,6 @@ export class MatchesPage implements OnInit {
         this.matches.sort((a, b) => {
           return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
         });
-
       })
   }
 
@@ -101,8 +100,8 @@ export class MatchesPage implements OnInit {
 
     newMatch.onDidDismiss()
       .then((event) => {
-        const dataChanged = event['data'];
-        if (dataChanged) { this.getAllMatches() }
+        const refreshPage = event['data'];
+        if (refreshPage) { this.getAllMatches() }
       });
     return await newMatch.present();
   }
