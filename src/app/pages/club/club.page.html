@@ -67,7 +67,8 @@
         </ion-header>
         <ion-content no-padding>
 
-          <center style="margin-top: 5%;">Füge einen Spieler zu {{ selectedClub.name }} hinzu.</center>
+          <ion-label style="margin-top: 5%; text-align: center;">Füge einen Spieler zu {{ selectedClub.name }} hinzu.
+          </ion-label>
 
           <form [formGroup]="newPlayerForm" (ngSubmit)="submitForm()">
             <ion-card>
