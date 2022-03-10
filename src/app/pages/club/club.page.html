@@ -51,6 +51,66 @@
   </ion-row>
 
 
+  <ion-footer *ngIf="selectedClub">
+    <ion-button expand="full" id="openModal" color="primary">
+      Spieler hinzufügen
+    </ion-button>
 
+    <ion-modal trigger="openModal" [initialBreakpoint]="0.7" [breakpoints]="[0, 0.7, 1]">
+      <ng-template>
+        <ion-header class="ion-no-border">
+          <ion-toolbar>
+            <ion-buttons slot="end">
+              <ion-button (click)="dismissModal()">Close</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content no-padding>
+
+          <center style="margin-top: 5%;">Füge einen Spieler zu {{ selectedClub.name }} hinzu.</center>
+
+          <form [formGroup]="newPlayerForm" (ngSubmit)="submitForm()">
+            <ion-card>
+              <ion-item lines="full">
+                <ion-label position="floating">Spielername</ion-label>
+                <ion-input formControlName="name" type="text"> </ion-input>
+                <ion-note slot="error" *ngIf="(name.dirty || name.touched) && name.errors">Ungültiger Name
+                </ion-note>
+              </ion-item>
+
+              <ion-item lines="full">
+                <ion-label position="floating">E-Mail</ion-label>
+                <ion-input formControlName="email" type="text" (ionBlur)="checkForDuplicatedPlayer()"></ion-input>
+                <ion-note slot="helper">Der Spieler bekommt einen Aktivierungslink an diese E-Mail-Adresse geschickt
+                </ion-note>
+                <!-- <ion-note slot="error" *ngIf="emails?.errors?.duplicate">
+                  Dieser Spieler existiert bereits im Verein
+                </ion-note> -->
+                <ion-note slot="error" *ngIf="(email.dirty || email.touched) && email?.errors?.required">
+                  Ungültige E-Mail-Adresse
+                </ion-note>
+                <ion-note slot="error" *ngIf="(email.dirty || email.touched) && email?.errors?.duplicate">
+                  Dieser Spieler existiert bereits im Verein
+                </ion-note>
+              </ion-item>
+
+              <!-- <ion-item lines="full">
+                <ion-label>Als Admin hinzufügen</ion-label>
+                <ion-checkbox color="primary" formControlName="isAdmin"></ion-checkbox>
+              </ion-item> -->
+
+              <ion-row>
+                <ion-col>
+                  <ion-button type="submit" color="primary" expand="block" [disabled]="!newPlayerForm.valid">
+                    Code versenden</ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-card>
+
+          </form>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+  </ion-footer>
 
 </ion-content>

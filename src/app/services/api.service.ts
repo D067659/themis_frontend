@@ -31,9 +31,11 @@ export class ApiService {
     return this.http.get(`${this.url}/api/clubs/${clubId}/players`);
   }
 
+  addPlayerToClub(clubId, player) {
+    return this.http.post(`${this.url}/api/clubs/${clubId}/players`, { clubName: player.clubName, receiverName: player.name, receiverEmail: player.email });
+  }
+
   removePlayerFromClub(clubId, playerId) {
-    console.log('club:', clubId);
-    console.log('player', playerId);
     return this.http.delete(`${this.url}/api/clubs/${clubId}/players/${playerId}`);
   }
 

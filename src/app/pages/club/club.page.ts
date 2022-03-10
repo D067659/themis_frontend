@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { from } from 'rxjs';
 import { mergeMap, toArray } from 'rxjs/operators';
 import { ApiService } from '../../services/api.service';
 import { Platform } from '@ionic/angular';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-club',
@@ -17,15 +18,20 @@ export class ClubPage implements OnInit {
   selectedClub = null;
   clubs = [];
   players = [];
+  newPlayerForm: FormGroup;
+  playerAlreadyInClub = false;
 
   constructor(
     private apiService: ApiService,
     private alertController: AlertController,
-    public platform: Platform
+    public platform: Platform,
+    private modalController: ModalController,
+    private formBuilder: FormBuilder
   ) { }
 
   ngOnInit() {
     this.loadSetup();
+    this.loadNewPlayerForm();
   }
 
   async loadSetup() {
@@ -68,6 +74,18 @@ export class ClubPage implements OnInit {
     });
   }
 
+  checkForDuplicatedPlayer() {
+    const emailCheck = this.newPlayerForm.get('email').value;
+    this.playerAlreadyInClub = this.players.some((player) => player.email == emailCheck);
+    if (this.playerAlreadyInClub) {
+      this.newPlayerForm.get('email').setErrors(({ 'duplicate': true }));
+    }
+  }
+
+  async submitForm() {
+    this.apiService.addPlayerToClub(this.selectedClub._id, this.newPlayerForm.value).subscribe((x) => { console.log('x is', x) });
+  }
+
   async promtForDeletion(player) {
     const alert = await this.alertController.create({
       header: 'Löschen bestätigen!',
@@ -106,6 +124,27 @@ export class ClubPage implements OnInit {
 
   entryIsMe(player) {
     return player._id == this.apiService.currentUser._id;
+  }
+
+  loadNewPlayerForm() {
+    this.newPlayerForm = this.formBuilder.group({
+      name: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(20)]],
+      email: ['', [Validators.required, Validators.email]],
+      // isAdmin: [''] TODO: Maybe we can define admins right on creation, currently it is desired to have this as additional step (like deleting via swipe)
+      clubName: [this.selectedClub.name]
+    });
+  }
+
+  get name() {
+    return this.newPlayerForm.get('name');
+  }
+
+  get email() {
+    return this.newPlayerForm.get('email');
+  }
+
+  async dismissModal() {
+    await this.modalController.dismiss();
   }
 
 }

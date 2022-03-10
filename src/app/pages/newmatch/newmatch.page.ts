@@ -3,7 +3,6 @@ import { ApiService } from '../../services/api.service';
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { AlertController, IonDatetime, ModalController, NavParams, ToastController } from '@ionic/angular';
 import { format, parseISO } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
 
 @Component({
   selector: 'app-newmatch',
@@ -20,7 +19,8 @@ export class NewmatchPage implements OnInit {
   loaded = false;
   @ViewChild(IonDatetime) datetime: IonDatetime;
 
-  constructor(public formBuilder: FormBuilder,
+  constructor(
+    public formBuilder: FormBuilder,
     private apiService: ApiService,
     private modalController: ModalController,
     private navParams: NavParams,
@@ -59,7 +59,6 @@ export class NewmatchPage implements OnInit {
     });
 
     this.setFormattedDate();
-
   }
 
   addToNewParticipantList(player) {
