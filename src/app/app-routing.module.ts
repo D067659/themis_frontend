@@ -12,12 +12,11 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule),
-    canLoad: [AutoLoginGuard] // Check if we should show the introduction or forward to inside
+    canLoad: [AutoLoginGuard]
   },
   {
     path: 'register',
-    loadChildren: () => import('./pages/register/register.module').then(m => m.RegisterPageModule),
-    canLoad: [AutoLoginGuard] // Check if we should show the introduction or forward to inside
+    loadChildren: () => import('./pages/register/register.module').then(m => m.RegisterPageModule)
   },
   {
     path: 'home',

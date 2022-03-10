@@ -40,7 +40,8 @@ export class ClubPage implements OnInit {
     if (!this.selectedClub) {
       this.getPossibleClubs().subscribe((clubs: any) => {
         this.clubs = clubs;
-        if (this.clubs.length == 1) { this.setSelectedClub(this.clubs[0]); }
+        console.log('possible clubs: ', this.clubs);
+        if (this.clubs.length < 2) { this.setSelectedClub(this.clubs[0]); }
       });
     } else {
       this.getPlayersForClub();
@@ -131,7 +132,7 @@ export class ClubPage implements OnInit {
       name: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(20)]],
       email: ['', [Validators.required, Validators.email]],
       // isAdmin: [''] TODO: Maybe we can define admins right on creation, currently it is desired to have this as additional step (like deleting via swipe)
-      clubName: [this.selectedClub.name]
+      clubName: [this.selectedClub?.name]
     });
   }
 
