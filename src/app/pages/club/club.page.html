@@ -51,7 +51,7 @@
   </ion-row>
 
 
-  <ion-footer *ngIf="selectedClub">
+  <ion-footer *ngIf="selectedClub && hasAdminRole()">
     <ion-button expand="full" id="openModal" color="primary">
       Spieler hinzufügen
     </ion-button>
