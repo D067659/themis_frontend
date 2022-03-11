@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { from } from 'rxjs';
 import { mergeMap, toArray } from 'rxjs/operators';
 import { ApiService } from '../../services/api.service';
@@ -26,7 +26,8 @@ export class ClubPage implements OnInit {
     private alertController: AlertController,
     public platform: Platform,
     private modalController: ModalController,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
@@ -84,7 +85,11 @@ export class ClubPage implements OnInit {
   }
 
   async submitForm() {
-    this.apiService.addPlayerToClub(this.selectedClub._id, this.newPlayerForm.value).subscribe((x) => { console.log('x is', x) });
+    this.newPlayerForm.controls["clubName"].setValue(this.selectedClub.name);
+    this.apiService.addPlayerToClub(this.selectedClub._id, this.newPlayerForm.value).subscribe(async (x) => {
+      await this.presentToast();
+      await this.dismissModal();
+    });
   }
 
   async promtForDeletion(player) {
@@ -132,7 +137,7 @@ export class ClubPage implements OnInit {
       name: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(20)]],
       email: ['', [Validators.required, Validators.email]],
       // isAdmin: [''] TODO: Maybe we can define admins right on creation, currently it is desired to have this as additional step (like deleting via swipe)
-      clubName: [this.selectedClub?.name]
+      clubName: []
     });
   }
 
@@ -146,6 +151,14 @@ export class ClubPage implements OnInit {
 
   async dismissModal() {
     await this.modalController.dismiss();
+  }
+
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: 'Aktivierungslink erfolgreich versandt',
+      duration: 2000
+    });
+    toast.present();
   }
 
 }
