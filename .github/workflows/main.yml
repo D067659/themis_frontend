@@ -8,22 +8,24 @@ jobs:
   build:
     name: Build & Deploy
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Use Node.js ${{ matrix.node-version }} and build
+        uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
       - run: npm ci
-      - name: Checkout Repo
-        uses: actions/checkout@master
-      - name: Install Dependencies
-        run: npm install
-      - name: Build
-        run: npm run appStartProd
+      - run: npm run appStartProd
+
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@v1.5.0
         with:
-          node-version: 16
           args: deploy --only hosting
         env:
           FIREBASE_TOKEN: 1//09snfGLMAbvogCgYIARAAGAkSNwF-L9IrO7Ly1MYVcEmP4YI8yPaQng3TBYDb12PPXfhxm-XLFNZ3ScRE5gIovw5PxpE72bmKdWY
