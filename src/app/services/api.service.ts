@@ -55,7 +55,6 @@ export class ApiService {
   }
 
   updateMatch(match: any) {
-    console.log('updating match', match);
     return this.http.put(`${this.url}/api/clubs/${match.clubId}/matches/${match._id}`, match);
   }
 

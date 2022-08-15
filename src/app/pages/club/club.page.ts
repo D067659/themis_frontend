@@ -41,7 +41,6 @@ export class ClubPage implements OnInit {
     if (!this.selectedClub) {
       this.getPossibleClubs().subscribe((clubs: any) => {
         this.clubs = clubs;
-        console.log('possible clubs: ', this.clubs);
         if (this.clubs.length < 2) { this.setSelectedClub(this.clubs[0]); }
       });
     } else {

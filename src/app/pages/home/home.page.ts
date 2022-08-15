@@ -17,7 +17,6 @@ export class HomePage implements OnInit {
   }
 
   async dismissModal() {
-    console.log('method triggered');
     await this.modalController.dismiss();
   }
 
