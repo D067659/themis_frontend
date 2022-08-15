@@ -11,102 +11,184 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="matchForm" (ngSubmit)="submitForm()" novalidate>
-    <div>
-      <ion-item lines="full">
-        <ion-label position="floating">Stadt</ion-label>
-        <ion-input formControlName="city" type="text"> </ion-input>
-        <ion-note slot="error" *ngIf="(city.dirty || city.touched) && city.errors">Ungültige Stadt
-        </ion-note>
-      </ion-item>
+  <section class="h-screen bg-gray-100 bg-opacity-50">
+    <form class="container max-w-2xl mx-auto shadow-md" [formGroup]="matchForm" (ngSubmit)="submitForm()" novalidate>
+      <div class="space-y-6 bg-white">
+        <div class="items-center w-full pl-5 pt-1 space-y-2 text-gray-500 md:inline-flex md:space-y-0">
+          <h2 class="max-w-sm mx-auto md:w-1/3">
+            Stadt
+          </h2>
+          <div class="max-w-sm mx-auto md:w-2/3">
+            <div class="relative ">
+              <input type="text" id="user-info-email" formControlName="city" type="text"
+                class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-4/5 py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                placeholder="Stadt" />
+              <div *ngIf="(city.dirty || city.touched) && city.errors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                  class="absolute text-red-500 right-12 bottom-3" viewBox="0 0 1792 1792">
+                  <path
+                    d="M1024 1375v-190q0-14-9.5-23.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 23.5v190q0 14 9.5 23.5t22.5 9.5h192q13 0 22.5-9.5t9.5-23.5zm-2-374l18-459q0-12-10-19-13-11-24-11h-220q-11 0-24 11-10 7-10 21l17 457q0 10 10 16.5t24 6.5h185q14 0 23.5-6.5t10.5-16.5zm-14-934l768 1408q35 63-2 126-17 29-46.5 46t-63.5 17h-1536q-34 0-63.5-17t-46.5-46q-37-63-2-126l768-1408q17-31 47-49t65-18 65 18 47 49z">
+                  </path>
+                </svg>
+                <p class="absolute text-sm text-red-500 -bottom-6">
+                  Eingabe muss zwischen 4 und 20 Zeichen liegen
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <ion-item lines="full">
-        <ion-label position="floating">Gegner</ion-label>
-        <ion-input formControlName="opponent" type="text"></ion-input>
-        <ion-note slot="error" *ngIf="(opponent.dirty || opponent.touched) && opponent.errors">
-          Ungültiger Gegner
-        </ion-note>
-      </ion-item>
+        <hr />
 
-      <ion-item id="open-modal">
-        <ion-label>Datum und Uhrzeit</ion-label>
-        <ion-text slot="end">{{ formattedDate }} </ion-text>
-      </ion-item>
+        <div class="items-center w-full pl-5 space-y-2 text-gray-500 md:inline-flex md:space-y-0">
+          <h2 class="max-w-sm mx-auto md:w-1/3">
+            Gegner
+          </h2>
+          <div class="max-w-sm mx-auto md:w-2/3">
+            <div class="relative ">
+              <input type="text" id="user-info-email" formControlName="opponent" type="text"
+                class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-4/5 py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                placeholder="Stadt" />
+              <div *ngIf="(opponent.dirty || opponent.touched) && opponent.errors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                  class="absolute text-red-500 right-12 bottom-3" viewBox="0 0 1792 1792">
+                  <path
+                    d="M1024 1375v-190q0-14-9.5-23.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 23.5v190q0 14 9.5 23.5t22.5 9.5h192q13 0 22.5-9.5t9.5-23.5zm-2-374l18-459q0-12-10-19-13-11-24-11h-220q-11 0-24 11-10 7-10 21l17 457q0 10 10 16.5t24 6.5h185q14 0 23.5-6.5t10.5-16.5zm-14-934l768 1408q35 63-2 126-17 29-46.5 46t-63.5 17h-1536q-34 0-63.5-17t-46.5-46q-37-63-2-126l768-1408q17-31 47-49t65-18 65 18 47 49z">
+                  </path>
+                </svg>
+                <p class="absolute text-sm text-red-500 -bottom-6">
+                  Eingabe muss zwischen 4 und 20 Zeichen liegen
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <ion-modal trigger="open-modal" [initialBreakpoint]="0.6" [breakpoints]="[0, 0.6, 1]">
-        <ng-template>
-          <ion-content>
-            <ion-datetime #datetime formControlName="startDate" presentation="date-time" size="cover"
-              (ionChange)="setFormattedDate()">
-              <ion-buttons slot="buttons">
-                <ion-button (click)="closeDateTimePicker()" color="danger" slot="start">Abbrechen</ion-button>
-                <ion-button (click)="selectDateTimePicker()" color="primary" slot="end">Übernehmen</ion-button>
-              </ion-buttons>
-            </ion-datetime>
-          </ion-content>
-        </ng-template>
-      </ion-modal>
+        <hr />
 
-      <ion-item lines="full">
-        <ion-label position="fixed">Heimspiel</ion-label>
-        <ion-checkbox color="primary" formControlName="isHome"></ion-checkbox>
-      </ion-item>
+        <div class="items-center w-full pl-5 space-y-2 text-gray-500 md:inline-flex md:space-y-0" id="open-modal">
+          <h2 class="max-w-sm mx-auto md:w-1/3">
+            Datum und Uhrzeit
+          </h2>
+          <div class="max-w-sm mx-auto md:w-2/3">
+            <div class="relative ">
+              <input type="text" id="user-info-email" type="text"
+                class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-4/5 py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                value="{{ formattedDate }}" />
+            </div>
+          </div>
+          <ion-modal trigger="open-modal" [initialBreakpoint]="0.6" [breakpoints]="[0, 0.6, 1]">
+            <ng-template>
+              <ion-content>
+                <ion-datetime #datetime formControlName="startDate" presentation="date-time" size="cover"
+                  (ionChange)="setFormattedDate()">
+                  <ion-buttons slot="buttons">
+                    <ion-button (click)="closeDateTimePicker()" color="danger" slot="start">Abbrechen</ion-button>
+                    <ion-button (click)="selectDateTimePicker()" color="primary" slot="end">Übernehmen</ion-button>
+                  </ion-buttons>
+                </ion-datetime>
+              </ion-content>
+            </ng-template>
+          </ion-modal>
+        </div>
 
-      <ion-item lines="full">
-        <ion-label position="floating">Ort für Treffpunkt</ion-label>
-        <ion-input formControlName="meetingPoint" type="text"></ion-input>
-        <ion-note slot="error" *ngIf="(meetingPoint.dirty || meetingPoint.touched) && meetingPoint.errors">Ungültiger
-          Treffpunkt
-        </ion-note>
-      </ion-item>
+        <hr />
 
-      <ion-card *ngIf="loaded">
-        <ion-card-header>
-          <ion-card-subtitle>Rückmeldungen</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-item *ngFor="let player of players | filterBy: ['participation.hasTime']: ['true', 'false', 'null']">
-            <ion-label> {{ player.name }} </ion-label>
-            <ion-icon slot="end"
-              [color]="player.participation.hasTime ? 'success' : player.participation.hasTime == false ? 'danger' : 'primary'"
-              [name]="player.participation.hasTime ? 'checkmark-circle-outline' : player.participation.hasTime == false ? 'close-circle-outline' : 'help-circle-outline'">
-            </ion-icon>
-          </ion-item>
-        </ion-card-content>
-      </ion-card>
+        <div class="items-center w-full pl-5 space-y-2 text-gray-500 md:inline-flex md:space-y-0">
+          <h2 class="max-w-sm mx-auto md:w-1/3">
+            Heimspiel
+          </h2>
+          <div class="max-w-sm mx-auto md:w-2/3">
+            <div class="relative ">
+              <label class="flex items-center space-x-3 mb-3">
+                <ion-checkbox formControlName="isHome">
+                </ion-checkbox>
+                <span class="text-gray-700 dark:text-white font-normal">
+                  {{ matchForm.get('isHome').value ? 'Ja' : 'Nein' }}
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
 
-      <ion-card *ngIf="loaded">
-        <ion-card-header>
-          <ion-card-subtitle>Spieler hinzufügen</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-item *ngFor="let player of players | filterBy: ['participation']: 'not asked'" lines="none" button
-            (click)="addToNewParticipantList(player)">
-            <ion-label> {{ player.name }} </ion-label>
-            <ion-icon slot="start" color="primary" [name]='player.new ? "remove-circle-outline" : "add-circle-outline"'>
-            </ion-icon>
-            <ion-chip outline color="success" *ngIf="player.new">
-              <ion-label><small>Wird angefragt</small></ion-label>
-            </ion-chip>
-          </ion-item>
-        </ion-card-content>
-      </ion-card>
+        <hr />
 
-      <ion-card *ngIf="!loaded">
-        <ion-card-content>
-          <ion-item lines="none">
-            <ion-label text-wrap>Sobald ein Spiel angelegt ist, kannst du Spieler hinzufügen</ion-label>
-            <ion-icon slot="start" color="primary" name="information-outline"></ion-icon>
-          </ion-item>
-        </ion-card-content>
-      </ion-card>
+        <div class="items-center w-full pl-5 space-y-2 text-gray-500 md:inline-flex md:space-y-0">
+          <h2 class="max-w-sm mx-auto md:w-1/3">
+            Ort für Treffpunkt
+          </h2>
+          <div class="max-w-sm mx-auto md:w-2/3">
+            <div class="relative ">
+              <input type="text" id="user-info-email" formControlName="meetingPoint" type="text"
+                class="rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-4/5 py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                placeholder="Treffpunkt" />
+              <div *ngIf="(meetingPoint.dirty || meetingPoint.touched) && meetingPoint.errors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor"
+                  class="absolute text-red-500 right-12 bottom-3" viewBox="0 0 1792 1792">
+                  <path
+                    d="M1024 1375v-190q0-14-9.5-23.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 23.5v190q0 14 9.5 23.5t22.5 9.5h192q13 0 22.5-9.5t9.5-23.5zm-2-374l18-459q0-12-10-19-13-11-24-11h-220q-11 0-24 11-10 7-10 21l17 457q0 10 10 16.5t24 6.5h185q14 0 23.5-6.5t10.5-16.5zm-14-934l768 1408q35 63-2 126-17 29-46.5 46t-63.5 17h-1536q-34 0-63.5-17t-46.5-46q-37-63-2-126l768-1408q17-31 47-49t65-18 65 18 47 49z">
+                  </path>
+                </svg>
+                <p class="absolute text-sm text-red-500 -bottom-6">
+                  Eingabe muss zwischen 4 und 20 Zeichen liegen
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <ion-row>
-        <ion-col>
-          <ion-button type="submit" color="primary" expand="block" [disabled]="!matchForm.valid">
-            Speichern</ion-button>
-        </ion-col>
-      </ion-row>
-    </div>
-  </form>
+        <hr />
+
+        <ion-card *ngIf="loaded">
+          <ion-card-header>
+            <ion-card-subtitle>Rückmeldungen</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item *ngFor="let player of players | filterBy: ['participation.hasTime']: ['true', 'false', 'null']">
+              <ion-label> {{ player.name }} </ion-label>
+              <ion-icon slot="end"
+                [color]="player.participation.hasTime ? 'success' : player.participation.hasTime == false ? 'danger' : 'primary'"
+                [name]="player.participation.hasTime ? 'checkmark-circle-outline' : player.participation.hasTime == false ? 'close-circle-outline' : 'help-circle-outline'">
+              </ion-icon>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card *ngIf="loaded">
+          <ion-card-header>
+            <ion-card-subtitle>Spieler hinzufügen</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item *ngFor="let player of players | filterBy: ['participation']: 'not asked'" lines="none" button
+              (click)="addToNewParticipantList(player)">
+              <ion-label> {{ player.name }} </ion-label>
+              <ion-icon slot="start" color="primary"
+                [name]='player.new ? "remove-circle-outline" : "add-circle-outline"'>
+              </ion-icon>
+              <ion-chip outline color="success" *ngIf="player.new">
+                <ion-label><small>Wird angefragt</small></ion-label>
+              </ion-chip>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card *ngIf="!loaded">
+          <ion-card-content>
+            <ion-item lines="none">
+              <ion-label text-wrap>Sobald ein Spiel angelegt ist, kannst du Spieler hinzufügen</ion-label>
+              <ion-icon slot="start" color="primary" name="information-outline"></ion-icon>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+
+
+        <div class="w-full px-4 pb-4 ml-auto text-gray-500 md:w-1/3">
+          <button type="submit" disabled="!matchForm.valid"
+            class="py-2 px-4  bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+            Spiel speichern
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
 </ion-content>
