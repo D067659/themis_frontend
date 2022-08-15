@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { tap, switchMap, map, mergeMap, toArray } from 'rxjs/operators';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { Storage } from '@capacitor/storage';
+import { Preferences } from '@capacitor/preferences';
 
 const USER_TOKEN_KEY = 'my-userinfo-token';
 
@@ -84,28 +84,28 @@ export class ApiService {
   //// <!------- Helper functions ------->
   // Globally set the chosen club for user
   async setSelectedClub(club) {
-    let user = await Storage.get({ key: USER_TOKEN_KEY });
+    let user = await Preferences.get({ key: USER_TOKEN_KEY });
     if (user && user.value) {
       this.currentUser = JSON.parse(user.value);
       this.currentUser.selectedClub = club
-      return Storage.set({ key: USER_TOKEN_KEY, value: JSON.stringify(this.currentUser) });
+      return Preferences.set({ key: USER_TOKEN_KEY, value: JSON.stringify(this.currentUser) });
     }
   }
 
   // Globally remove the chosen club for user
   async removeSelectedClub() {
-    let user = await Storage.get({ key: USER_TOKEN_KEY });
+    let user = await Preferences.get({ key: USER_TOKEN_KEY });
     if (user && user.value) {
       this.currentUser = JSON.parse(user.value);
       this.currentUser.selectedClub = null
-      return Storage.set({ key: USER_TOKEN_KEY, value: JSON.stringify(this.currentUser) });
+      return Preferences.set({ key: USER_TOKEN_KEY, value: JSON.stringify(this.currentUser) });
     }
     return null;
   }
 
   // Load user data including accessToken on startup
   async loadToken() {
-    let user = await Storage.get({ key: USER_TOKEN_KEY });
+    let user = await Preferences.get({ key: USER_TOKEN_KEY });
     if (user && user.value) {
       this.currentUser = JSON.parse(user.value);
       if (this.currentUser.expireDate && new Date(this.currentUser.expireDate) > new Date()) {
@@ -137,7 +137,7 @@ export class ApiService {
         user.expireDate = this.addHours(new Date(), user.expiresInHours)
         delete user.expiresInHours;
         this.currentUser = user;
-        const storeAccess = Storage.set({ key: USER_TOKEN_KEY, value: JSON.stringify(user) });
+        const storeAccess = Preferences.set({ key: USER_TOKEN_KEY, value: JSON.stringify(user) });
         return from(storeAccess);
       }),
       tap(_ => {
@@ -157,7 +157,7 @@ export class ApiService {
   logout(): Promise<void> {
     this.isAuthenticated.next(false);
     this.router.navigateByUrl('/', { replaceUrl: true });
-    return Storage.remove({ key: USER_TOKEN_KEY });
+    return Preferences.remove({ key: USER_TOKEN_KEY });
   }
 
   addHours = function (date, hours) {
